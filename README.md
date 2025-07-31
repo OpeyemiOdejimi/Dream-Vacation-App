@@ -27,8 +27,8 @@ The  .env file is used by docker compose to manage and inject environmental vari
 docker compose up --build
 ```
 5. Access the services via
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend API: [http://localhost:3001/api/destinations](http://localhost:3001/api/destinations)
+- Frontend: http://localhost:3000
+- Backend API:http://localhost:3001/api/destinations
 6. Push the images to docker hub
 ```
 docker login -u "dockerusername"
