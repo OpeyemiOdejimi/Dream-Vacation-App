@@ -38,13 +38,15 @@ docker push "imageName"
 
 ## Evidence that the build was successful
 
-1. The backend was accessed via the url provided in the step above
-![db](images/db.png)
+1. ![db](images/db.png)
+_**Fig.1:** An image showing the services are connected and working_
 
-2. The frontend image 
-![frontend image](images/frontend.png)
-3. The backend image
-![backend image](images/backend.png)
+
+2. ![frontend image](images/frontend.png)
+_**Fig.2:** An image showing the backend image pushed to docker hub_
+
+3. ![backend image](images/backend.png)
+_**Fig.3:** An image showing the frontend image pushed to docker hub_
 
 
 
