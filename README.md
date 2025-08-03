@@ -22,6 +22,7 @@ POSTGRES_PASSWORD="desired password"
 DATABASE_URL="url that the bd runs on"
 ```
 The  .env file is used by docker compose to manage and inject environmental variables into your services.
+
 4. Run the app
 ```
 docker compose up --build
