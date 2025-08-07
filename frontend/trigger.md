@@ -1,1 +1,1 @@
-This file was created to test and trigger the GitHub Actions
+This file was created to test and trigger the GitHub Actions. The IMAGE_NAME was changed in the second job
