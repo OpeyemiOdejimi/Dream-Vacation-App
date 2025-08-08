@@ -37,19 +37,36 @@ docker push "imageName"
 ```
 
 
-## Evidence that the build was successful
-
-1. ![db](images/db.png)
-_**Fig.1:** An image showing the services are connected and working_
 
 
-2. ![frontend image](images/frontend.png)
-_**Fig.2:** An image showing the backend image pushed to docker hub_
+# CI/CD With GitHub Actions
 
-3. ![backend image](images/backend.png)
-_**Fig.3:** An image showing the frontend image pushed to docker hub_
+The purpose of this project is to help learn more on CI/CD with GitHub Actions. It uses GitHub Actions to build and automate deployment:
+* The build triggers when there is a push/pull on the `dev` branch.
+* It also builds Docker images for front and backend
+* Pushes image to docker hub tagged with commit hash.
 
+## Secrets 
 
+Make sure to set the following secrets in the GitHub repo settings:
+* `DOCKER_USERNAME`: your Docker hub username
+* `DOCKER_TOKEN`: your DOcker hub password or token.
 
+The following secrets will be called in your .github/workflows.
 
+## Workflow Breakdown
+
+1.**Frontend Workflow(.github/workflows/frontend.yaml):**
+* The job is triggered on push/pull to/from dev
+* Builds react frontend docker image
+* Pushes the created image to docker hub and tags it with commit hash.
+
+2.**Backend Workflow(.github/workflows/backend.yaml):**
+* The job is triggered on push/pull to/from dev
+* Builds react backend docker image
+* Pushes the created image to docker hub and tags it with commit hash.
+
+## Evidence that the workflow worked as expected and the docker images were built
+1. ![workflow](images/workflow.png)
+_**Fig.
 
