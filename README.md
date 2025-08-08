@@ -67,17 +67,17 @@ The following secrets will be called in your .github/workflows.
 * Pushes the created image to docker hub and tags it with commit hash.
 
 ## Evidence that the workflow worked as expected and the docker images were built
-1. ![workflow](images/workflow.png)
-_**Fig.1:** An image showing the successful jobs on GitHub Actions_
+1.![workflow](images/workflow.png)
+  _**Fig.1:** An image showing the successful jobs on GitHub Actions_
 
-2. ![docker_hub](images/annotely_image.png)
-_**Fig.2:** An image showing the newly created images annotated in red rectangle_
+2.![docker_hub](images/annotely_image.png)
+  _**Fig.2:** An image showing the newly created images annotated in red rectangle_
 
-3. ![frontend image](images/frontend_hash.png)
-_**Fig.3:** An image showing the frontend image tagged with commit hash_
+3.![frontend image](images/frontend_hash.png)
+  _**Fig.3:** An image showing the frontend image tagged with commit hash_
 
-4. ![backend image](images/backend_hash.png)
-_**Fig.4:** An image showing the backend image tagged with commit hash_
+4.![backend image](images/backend_hash.png)
+  _**Fig.4:** An image showing the backend image tagged with commit hash_
 
 
 
