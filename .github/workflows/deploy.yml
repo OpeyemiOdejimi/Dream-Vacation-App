@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - dev
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Copy app files to EC2
+      # Copy the project files to the EC2 instance
       - name: Copy project files to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -23,24 +22,26 @@ jobs:
           source: "."
           target: "~/dream-app"
 
-      # SSH and run Docker Compose with injected environment variables
-      - name: SSH and deploy with Docker Compose
+      # SSH into EC2 and run docker-compose with inline env variables
+      - name: SSH and deploy with Docker Compose (inline env)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DOCKER_USERNAME,POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD
           script: |
-            export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
-            export POSTGRES_DB="${{ secrets.POSTGRES_DB }}"
-            export POSTGRES_USER="${{ secrets.POSTGRES_USER }}"
-            export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
-
             cd ~/dream-app
 
             echo "Pulling latest Docker images..."
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
             docker-compose pull
 
             echo "Starting containers with environment variables..."
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
             docker-compose up -d
