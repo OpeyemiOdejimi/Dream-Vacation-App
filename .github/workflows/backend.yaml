@@ -3,12 +3,10 @@ name: Backend CI/CD
 on:
   push:
     branches: [ dev ]
-    paths:
-      - 'backend/**'
+    paths: [ 'backend/**' ]
   pull_request:
     branches: [ dev ]
-    paths:
-      - 'backend/**'
+    paths: [ 'backend/**' ]
   workflow_dispatch:
 
 env:
@@ -38,4 +36,17 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: SSH into EC2 and redeploy containers
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd dream-app
+            docker-compose pull
+            docker-compose up -d
