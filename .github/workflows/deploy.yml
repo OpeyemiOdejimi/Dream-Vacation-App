@@ -1,4 +1,4 @@
-name: Deploy Dream App
+name: Deploy Dream Vacation App
 
 on:
   push:
@@ -8,26 +8,39 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Copy files to EC2
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        source: "."
-        target: "~/dream-app"
+      # Copy app files to EC2
+      - name: Copy project files to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "."
+          target: "~/dream-app"
 
-    - name: Run Docker Compose
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd dream-app
-          docker-compose pull
-          docker-compose up -d
+      # SSH and run Docker Compose with injected environment variables
+      - name: SSH and deploy with Docker Compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DOCKER_USERNAME,POSTGRES_DB,POSTGRES_USER,POSTGRES_PASSWORD
+          script: |
+            export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
+            export POSTGRES_DB="${{ secrets.POSTGRES_DB }}"
+            export POSTGRES_USER="${{ secrets.POSTGRES_USER }}"
+            export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+
+            cd ~/dream-app
+
+            echo "Pulling latest Docker images..."
+            docker-compose pull
+
+            echo "Starting containers with environment variables..."
+            docker-compose up -d
