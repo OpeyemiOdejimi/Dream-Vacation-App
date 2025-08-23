@@ -22,7 +22,7 @@ jobs:
           source: "."
           target: "~/dream-app"
 
-      - name: SSH and deploy with Docker Compose (inline env)
+      - name: SSH and deploy with Docker Compose
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -30,19 +30,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/dream-app
-
-            echo "Pulling latest Docker images..."
-            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
-            IMAGE_TAG=${{ github.sha }} \
-            POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+            echo "Pulling images tagged with GitHub SHA..."
             docker-compose pull
 
-            echo "Starting containers with environment variables..."
-            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
-            IMAGE_TAG=${{ github.sha }} \
-            POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+            echo "Starting containers..."
             docker-compose up -d
+        env:
+          IMAGE_TAG: ${{ github.sha }}
