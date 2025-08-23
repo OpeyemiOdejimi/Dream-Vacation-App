@@ -30,17 +30,26 @@ jobs:
       - name: Deploy to EC2
         run: |
           set -e
-          echo "Copying files to EC2..."
-          scp -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ./docker-compose.yml ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
-          scp -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ./.env ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/  # if applicable
+          echo "Creating SSH key file..."
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-key.pem
+          chmod 600 ~/.ssh/ec2-key.pem
 
-          echo "Running Docker Compose on EC2..."
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+          echo "Copying docker-compose.yml to EC2..."
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/ec2-key.pem \
+            docker-compose.yml ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/
+
+          echo "Copying .env file to EC2 (if applicable)..."
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/ec2-key.pem \
+            .env ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/ || echo ".env file not found locally, skipping..."
+
+          echo "Connecting to EC2 and deploying with Docker Compose..."
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
             cd /home/ubuntu
-            docker-compose down
+            echo "Stopping and removing old containers..."
+            docker-compose down --remove-orphans
+            echo "Pulling latest Docker image..."
             docker-compose pull
+            echo "Starting containers in detached mode..."
             docker-compose up -d
-            echo "Deployment complete."
-EOF
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+            echo "✅ Deployment complete!"
