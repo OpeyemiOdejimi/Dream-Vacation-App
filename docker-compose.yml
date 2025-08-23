@@ -1,7 +1,6 @@
 services:
   frontend:
-    build:
-      context: ./frontend
+    image: docker.io/${DOCKER_USERNAME}/kc-opeyemi-frontend:latest
     ports:
       - "3000:80"
     depends_on:
@@ -10,8 +9,7 @@ services:
       - app-network
 
   backend:
-    build:
-      context: ./backend
+    image: docker.io/${DOCKER_USERNAME}/kc-opeyemi-backend:latest
     ports:
       - "3001:3001"
     depends_on:
