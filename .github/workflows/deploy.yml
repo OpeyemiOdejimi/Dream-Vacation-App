@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,7 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Copy the project files to the EC2 instance
       - name: Copy project files to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -22,7 +22,6 @@ jobs:
           source: "."
           target: "~/dream-app"
 
-      # SSH into EC2 and run docker-compose with inline env variables
       - name: SSH and deploy with Docker Compose (inline env)
         uses: appleboy/ssh-action@master
         with:
@@ -34,6 +33,7 @@ jobs:
 
             echo "Pulling latest Docker images..."
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
+            IMAGE_TAG=${{ github.sha }} \
             POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
             POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
@@ -41,6 +41,7 @@ jobs:
 
             echo "Starting containers with environment variables..."
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} \
+            IMAGE_TAG=${{ github.sha }} \
             POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
             POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \

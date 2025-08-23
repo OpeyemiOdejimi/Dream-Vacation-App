@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: docker.io/${DOCKER_USERNAME}/kc-opeyemi-frontend:latest
+    image: docker.io/${DOCKER_USERNAME}/kc-opeyemi-frontend:${IMAGE_TAG}
     ports:
       - "3000:80"
     depends_on:
@@ -9,7 +9,7 @@ services:
       - app-network
 
   backend:
-    image: docker.io/${DOCKER_USERNAME}/kc-opeyemi-backend:latest
+    image: docker.io/${DOCKER_USERNAME}/kc-opeyemi-backend:${IMAGE_TAG}
     ports:
       - "3001:3001"
     depends_on:
