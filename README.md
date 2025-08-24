@@ -67,7 +67,7 @@ The following secrets will be called in your .github/workflows.
 * Pushes the created image to docker hub and tags it with commit hash.
 
 ## Evidence that the workflow worked as expected and the docker images were built
-1.![workflow](images/workflow.png)
+1.![workflow](images/git_ci.png)
   _**Fig.1:** An image showing the successful jobs on GitHub Actions_
 
 2.![docker_hub](images/annotely_image.png)
@@ -82,23 +82,23 @@ The following secrets will be called in your .github/workflows.
 
 # Deployment to AWS EC2 Insance
 
-1. Screenshot of the VPC created on EC2 instance
+**Screenshot of the VPC created on EC2 instance**
 ![dream vpc](images/dreamvpc.png)
 _**Fig.5:** An image showing the vpc created on ec2 instance_
 
-2. Screenshot of the subnet created on EC2 instance.
+**Screenshot of the subnet created on EC2 instance**
 ![dream subnet](images/dreamsubnet.png)
 _**Fig.6:** An image showing the subnet created on ec2 instance_
 
-3. Screenshot of the instance running
+**Screenshot of the instance running**
 ![dream app](images/running_instance.png)
 _**Fig.7:** An image showing the running instance_
 
-4. Screenshot of the app in the browser
+**Screenshot of the app in the browser**
 ![app in browser](images/live_website.png)
 _**Fig.8:** An image showing the app running in the browser via its public ip_
 
-5. Screenshot of the GitHub actions logs
+**Screenshot of the GitHub actions logs**
 ![github actions log](images/workflow.png)
 _**Fig.9:** An image showing GitHub actions workflow logs_
 
