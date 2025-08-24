@@ -1,4 +1,4 @@
-name: Deploy Dream Vacation App
+name: Deploy Dream Vacation
 
 on:
   push:
