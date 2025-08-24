@@ -1,9 +1,8 @@
-name: Deploy Dream Vacation
+ame: Deploy to AWS EC2
 
 on:
   push:
-    branches:
-      - dev
+    branches: [dev]
 
 jobs:
   deploy:
@@ -11,29 +10,31 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Copy project files to EC2
-        uses: appleboy/scp-action@v0.1.4
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.5.4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "."
-          target: "~/dream-app"
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: SSH and deploy with Docker Compose
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd ~/dream-app
-            echo "Pulling images tagged with GitHub SHA..."
+      - name: Copy files to EC2 using rsync (excluding .git)
+        run: |
+          rsync -avz --exclude='.git' -e "ssh -o StrictHostKeyChecking=no" ./ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/app
+
+      - name: Create .env file on EC2 from GitHub secrets
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << EOF
+          cat <<EOT > /home/ubuntu/app/.env
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          EOT
+          EOF
+
+      - name: Run Docker Compose on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+            cd /home/ubuntu/app
             docker-compose pull
-
-            echo "Starting containers..."
             docker-compose up -d
-        env:
-          IMAGE_TAG: ${{ github.sha }}
+          EOF
